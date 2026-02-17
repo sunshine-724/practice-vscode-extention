@@ -1,26 +1,51 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
+import { SidebarProvider } from './ui/SidebarProvider';
+import { AutoDocAgent } from './lib/agent';
 
-// This method is called when your extension is activated
-// Your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
+	console.log('Congratulations, your extension "autodoc-agent-gemini" is now active!');
 
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "practice-vscode-extention" is now active!');
+	const sidebarProvider = new SidebarProvider(context.extensionUri);
+	context.subscriptions.push(
+		vscode.window.registerWebviewViewProvider(SidebarProvider.viewType, sidebarProvider)
+	);
 
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json
-	const disposable = vscode.commands.registerCommand('practice-vscode-extention.helloWorld', () => {
-		// The code you place here will be executed every time your command is executed
-		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World from practice-vscode-extention!');
-	});
+	context.subscriptions.push(
+		vscode.commands.registerCommand('autodoc.start', async (topic: string) => {
+			if (!topic) {
+				vscode.window.showErrorMessage('Please provide a topic/text.');
+				return;
+			}
 
-	context.subscriptions.push(disposable);
+			// Validate API Key
+			const config = vscode.workspace.getConfiguration('autodoc');
+			const apiKey = config.get<string>('gemini.apiKey');
+			if (!apiKey) {
+				const setKey = 'Set API Key';
+				const selection = await vscode.window.showErrorMessage('Gemini API Key is missing.', setKey);
+				if (selection === setKey) {
+					vscode.commands.executeCommand('workbench.action.openSettings', 'autodoc.gemini.apiKey');
+				}
+				sidebarProvider.error('API Key missing. Please set it in Settings.');
+				return;
+			}
+
+			// Run Agent
+			const agent = new AutoDocAgent((msg) => {
+				console.log(`[Agent] ${msg}`);
+				sidebarProvider.log(msg);
+			});
+
+			try {
+				await agent.run(topic);
+				sidebarProvider.finish();
+			} catch (e: any) {
+				sidebarProvider.error(e.message || String(e));
+			}
+		})
+	);
 }
 
-// This method is called when your extension is deactivated
-export function deactivate() {}
+export function deactivate() { }

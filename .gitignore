@@ -1,5 +1,10 @@
 out
 dist
 node_modules
-.vscode-test/
+.vscode-test
 *.vsix
+.DS_Store
+# Temporary files
+*.tmp.js
+*.tmp.md
+result/

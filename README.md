@@ -1,71 +1,51 @@
-# practice-vscode-extention README
+# Auto-Doc Agent (Gemini Edition)
 
-This is the README for your extension "practice-vscode-extention". After writing up a brief description, we recommend including the following sections.
+Gemini AI を搭載した自律型ドキュメント生成エージェントです。
+ユーザーが指定したトピックについて、Node.jsコードを作成・実行・修正し、動作確認済みのコードを含むMarkdownドキュメントを生成してプレビューします。
 
-## Features
+## 機能
+- **自律エージェント**: 解説文の執筆、コード生成、実行、エラー修正のループを自律的に行います。
+- **実行環境**: 生成されたコードはローカルのNode.js環境で実際に実行され、結果が検証されます。
+- **UI**: Reactで構築されたリッチなサイドバーUIを提供します。
+- **Auto Preview**: 生成完了後、自動的にプレビュー画面が開きます。
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+## セットアップ手順
 
-For example if there is an image subfolder under your extension project workspace:
+### 1. 依存関係のインストール
+```bash
+npm install
+```
 
-\!\[feature X\]\(images/feature-x.png\)
+### 2. ビルド
+```bash
+npm run compile
+```
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+### 3. デバッグ実行
+F5キーを押して拡張機能をデバッグ実行してください。
 
-## Requirements
+## 使い方
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+1. **Gemini APIキーの設定**
+   - [Google AI Studio](https://aistudio.google.com/app/apikey) でAPIキーを取得してください。
+   - VS Codeの設定 (`Ctrl+,`) を開き、`autodoc` で検索します。
+   - `Auto-doc > Gemini: Api Key` にAPIキーを入力してください。
+   - モデルは `gemini-2.0-flash-exp` (デフォルト) が推奨されます。
 
-## Extension Settings
+2. **エージェントの起動**
+   - アクティビティバー（左端）にあるGeminiアイコンをクリックします。
+   - サイドバーが開きます。
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+3. **ドキュメント生成**
+   - トピックを入力します（例：「Node.jsでフィボナッチ数列を計算する」「ファイルシステムを操作してファイル一覧を取得する」）。
+   - 「Start Generation」ボタンをクリックします。
+   - ログが表示され、処理が完了するとプレビューが開きます。
 
-For example:
+## 開発者向け情報
 
-This extension contributes the following settings:
+- **ビルドツール**: `esbuild` を使用して `dist/extension.js` (Node) と `dist/Sidebar.js` (Browser) にバンドルされます。
+- **UI**: `src/ui/Sidebar.tsx` (React)
+- **エージェント**: `src/lib/agent.ts`
 
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
-
-## Known Issues
-
-Calling out known issues can help limit users opening duplicate issues against your extension.
-
-## Release Notes
-
-Users appreciate release notes as you update your extension.
-
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
-
----
-
-## Following extension guidelines
-
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
-
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
-
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+## 注意事項
+生成されるコードはサンドボックス化されずに実行されます。信頼できる環境でのみ使用してください。
