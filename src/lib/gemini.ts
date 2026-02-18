@@ -29,7 +29,7 @@ export class GeminiClient {
             apiKey = config.get<string>('gemini.apiKey');
         }
 
-        const modelName = config.get<string>('gemini.model') || 'gemini-2.0-flash-exp';
+        const modelName = config.get<string>('gemini.model') || 'gemini-3-flash-preview';
 
         if (!apiKey) {
             throw new Error('API Key is not set. Please set GEMINI_API_KEY in .env or autodoc.gemini.apiKey in settings.');
