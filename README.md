@@ -28,9 +28,9 @@ F5キーを押して拡張機能をデバッグ実行してください。
 
 1. **Gemini APIキーの設定**
    - [Google AI Studio](https://aistudio.google.com/app/apikey) でAPIキーを取得してください。
-   - VS Codeの設定 (`Ctrl+,`) を開き、`autodoc` で検索します。
-   - `Auto-doc > Gemini: Api Key` にAPIキーを入力してください。
-   - モデルは `gemini-2.0-flash-exp` (デフォルト) が推奨されます。
+   - 以下のいずれかの方法で設定します：
+     - **方法A (.env)**: ワークスペース直下に `.env` ファイルを作成し、`GEMINI_API_KEY=your_key` を記述します。
+     - **方法B (推奨)**: VS Codeの設定 (`Ctrl+,`) > `Auto-doc > Gemini: Api Key` に入力します。
 
 2. **エージェントの起動**
    - アクティビティバー（左端）にあるGeminiアイコンをクリックします。

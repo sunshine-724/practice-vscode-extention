@@ -1,6 +1,6 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
+import * as path from 'path';
+import * as fs from 'fs';
 import { SidebarProvider } from './ui/SidebarProvider';
 import { AutoDocAgent } from './lib/agent';
 
@@ -21,14 +21,29 @@ export function activate(context: vscode.ExtensionContext) {
 
 			// Validate API Key
 			const config = vscode.workspace.getConfiguration('autodoc');
-			const apiKey = config.get<string>('gemini.apiKey');
+			let apiKey = config.get<string>('gemini.apiKey');
+
+			// Check .env if not in settings
+			if (!apiKey && vscode.workspace.workspaceFolders) {
+				const workspaceRoot = vscode.workspace.workspaceFolders[0].uri.fsPath;
+				const envPath = path.join(workspaceRoot, '.env');
+				if (fs.existsSync(envPath)) {
+					// We don't need to parse it fully here, just check existence or let the agent handle the error if key is missing/invalid inside.
+					// But for better UX, let's peek.
+					const envContent = fs.readFileSync(envPath, 'utf8');
+					if (envContent.includes('GEMINI_API_KEY=')) {
+						apiKey = 'found-in-env';
+					}
+				}
+			}
+
 			if (!apiKey) {
 				const setKey = 'Set API Key';
-				const selection = await vscode.window.showErrorMessage('Gemini API Key is missing.', setKey);
+				const selection = await vscode.window.showErrorMessage('Gemini API Key is missing (Settings or .env).', setKey);
 				if (selection === setKey) {
 					vscode.commands.executeCommand('workbench.action.openSettings', 'autodoc.gemini.apiKey');
 				}
-				sidebarProvider.error('API Key missing. Please set it in Settings.');
+				sidebarProvider.error('API Key missing. Please set GEMINI_API_KEY in .env or Settings.');
 				return;
 			}
 
